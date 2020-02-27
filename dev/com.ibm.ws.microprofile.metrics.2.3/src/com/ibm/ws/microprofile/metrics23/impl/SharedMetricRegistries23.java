@@ -21,10 +21,23 @@ import com.ibm.ws.microprofile.metrics.impl.SharedMetricRegistries;
  */
 @Component(service = SharedMetricRegistries.class, immediate = true)
 public class SharedMetricRegistries23 extends SharedMetricRegistries {
-
     @Override
-    protected MetricRegistry createNewMetricRegsitry(ConfigProviderResolver configResolver) {
-        return new MetricRegistry23Impl(configResolver);
+    public MetricRegistry getOrCreate(String name) {
+        final MetricRegistry existing = SharedMetricRegistries.REGISTRIES.get(name);
+        if (existing == null) {
+            final MetricRegistry created = createNewMetricRegsitry(configResolver, name);
+            final MetricRegistry raced = add(name, created);
+            if (raced == null) {
+                return created;
+            }
+            return raced;
+        }
+        return existing;
+    }
+
+//    @Override
+    protected MetricRegistry createNewMetricRegsitry(ConfigProviderResolver configResolver, String name) {
+        return new MetricRegistry23Impl(configResolver, name);
     }
 
 }

@@ -19,6 +19,7 @@ import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.Metric;
 import org.eclipse.microprofile.metrics.MetricFilter;
 import org.eclipse.microprofile.metrics.MetricID;
+import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.SimpleTimer;
 import org.eclipse.microprofile.metrics.Tag;
@@ -30,12 +31,14 @@ import com.ibm.ws.microprofile.metrics.impl.MetricRegistryImpl;
  */
 @Vetoed
 public class MetricRegistry23Impl extends MetricRegistryImpl {
+    private final Type type;
 
     /**
      * @param configResolver
      */
-    public MetricRegistry23Impl(ConfigProviderResolver configResolver) {
+    public MetricRegistry23Impl(ConfigProviderResolver configResolver, String type) {
         super(configResolver);
+        this.type = setType(type);
     }
 
     @Override
@@ -84,6 +87,21 @@ public class MetricRegistry23Impl extends MetricRegistryImpl {
         else {
             return super.determineMetricClass(metric);
         }
+    }
+
+    protected Type setType(String name) {
+        if (name.equals(MetricRegistry.Type.APPLICATION.getName()))
+            return MetricRegistry.Type.APPLICATION;
+        if (name.equals(MetricRegistry.Type.BASE.getName()))
+            return MetricRegistry.Type.BASE;
+        if (name.equals(MetricRegistry.Type.VENDOR.getName()))
+            return MetricRegistry.Type.VENDOR;
+        return null;
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 
     protected interface MetricBuilder23<T extends Metric> extends MetricBuilder<Metric> {
