@@ -24,7 +24,7 @@ import org.eclipse.microprofile.metrics.Tag;
 
 import com.ibm.websphere.ras.Tr;
 import com.ibm.websphere.ras.TraceComponent;
-import com.ibm.ws.microprofile.metrics.impl.SharedMetricRegistries;
+import com.ibm.ws.microprofile.metrics30.impl.SharedMetricRegistries;
 
 public class MonitorMetrics {
 

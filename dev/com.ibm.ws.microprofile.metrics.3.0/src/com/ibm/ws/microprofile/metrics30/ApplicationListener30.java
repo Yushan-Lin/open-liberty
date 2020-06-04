@@ -21,8 +21,9 @@ import org.osgi.service.component.annotations.Reference;
 import com.ibm.ws.container.service.app.deploy.ApplicationInfo;
 import com.ibm.ws.container.service.state.ApplicationStateListener;
 import com.ibm.ws.container.service.state.StateChangeException;
-import com.ibm.ws.microprofile.metrics.impl.SharedMetricRegistries;
-import com.ibm.ws.microprofile.metrics30.impl.MetricRegistry30Impl;
+import com.ibm.ws.microprofile.metrics30.impl.SharedMetricRegistries;
+
+import io.smallrye.metrics.MetricsRegistryImpl;
 
 @Component(service = { ApplicationStateListener.class }, configurationPolicy = ConfigurationPolicy.IGNORE, immediate = true)
 public class ApplicationListener30 implements ApplicationStateListener {
@@ -52,8 +53,8 @@ public class ApplicationListener30 implements ApplicationStateListener {
         MetricRegistry[] registryArray = new MetricRegistry[] { sharedMetricRegistry.getOrCreate(MetricRegistry.Type.APPLICATION.getName()),
                                                                 sharedMetricRegistry.getOrCreate(MetricRegistry.Type.BASE.getName()) };
         for (MetricRegistry registry : registryArray) {
-            if (MetricRegistry30Impl.class.isInstance(registry)) {
-                MetricRegistry30Impl impl = (MetricRegistry30Impl) registry;
+            if (MetricsRegistryImpl.class.isInstance(registry)) {
+                MetricsRegistryImpl impl = (MetricsRegistryImpl) registry;
                 impl.unRegisterApplicationMetrics(appInfo.getDeploymentName());
             }
         }

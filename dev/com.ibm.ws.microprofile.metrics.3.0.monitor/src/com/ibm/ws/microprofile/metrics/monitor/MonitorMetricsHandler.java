@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.ibm.websphere.ras.Tr;
 import com.ibm.websphere.ras.TraceComponent;
 import com.ibm.ws.ffdc.FFDCFilter;
-import com.ibm.ws.microprofile.metrics.impl.SharedMetricRegistries;
+import com.ibm.ws.microprofile.metrics30.impl.SharedMetricRegistries;
 
 @Component(name = "com.ibm.ws.microprofile.metrics.monitor.MonitorMetricsHandler", property = { "service.vendor=IBM"})
 public class MonitorMetricsHandler {

@@ -20,7 +20,8 @@ import javax.management.openmbean.CompositeData;
 import com.ibm.websphere.ras.Tr;
 import com.ibm.websphere.ras.TraceComponent;
 import com.ibm.ws.ffdc.FFDCFilter;
-import com.ibm.ws.microprofile.metrics23.impl.SimpleTimerImpl;
+
+import io.smallrye.metrics.app.SimpleTimerImpl;
 
 public class MonitorSimpleTimer extends SimpleTimerImpl {
 	
