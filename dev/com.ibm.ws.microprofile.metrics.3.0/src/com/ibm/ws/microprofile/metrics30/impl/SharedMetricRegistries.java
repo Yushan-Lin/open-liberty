@@ -23,10 +23,8 @@ import io.smallrye.metrics.MetricsRegistryImpl;
  */
 @Component(service = SharedMetricRegistries.class, immediate = true)
 public class SharedMetricRegistries {
-//    protected static final ConcurrentMap<String, MetricRegistry> REGISTRIES = new ConcurrentHashMap<String, MetricRegistry>();
 
     public static void clear() {
-        System.out.println("REMOVE ALL");
         MetricRegistries.dropAll();
     }
 
@@ -35,18 +33,15 @@ public class SharedMetricRegistries {
 //        return REGISTRIES.keySet();
 //    }
     public static void remove(String key) {
-        System.out.println("REMOVE!!");
         Type type = typeOf(key);
         MetricRegistries.drop(type);
     }
 
-//    @Override
     public MetricRegistry add(String name, MetricRegistry registry) {
         Type type = typeOf(name);
         return MetricRegistries.get(type);
     }
 
-//    @Override
     public MetricRegistry getOrCreate(String name) {
         Type type = typeOf(name);
         final MetricRegistry existing = MetricRegistries.get(type);
@@ -61,20 +56,11 @@ public class SharedMetricRegistries {
         return existing;
     }
 
-//    @Override
-//    @Reference(service = ConfigProviderResolver.class, cardinality = ReferenceCardinality.MANDATORY)
-//    protected void setConfigProvider(ConfigProviderResolver configResolver) {
-//        this.configResolver = configResolver;
-//    }
-
-//    @Override
     protected MetricRegistry createNewMetricRegsitry(Type type) {
-//        return new MetricsRegistryImpl(configResolver);
         return new MetricsRegistryImpl(type);
 
     }
 
-//    @Override
     public void associateMetricIDToApplication(MetricID metricID, String appName, MetricRegistry registry) {
         if (MetricsRegistryImpl.class.isInstance(registry)) {
             MetricsRegistryImpl metricRegistryImpl = (MetricsRegistryImpl) registry;

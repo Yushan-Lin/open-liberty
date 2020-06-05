@@ -46,6 +46,9 @@ import org.eclipse.microprofile.metrics.SimpleTimer;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
 
+import com.ibm.websphere.ras.Tr;
+import com.ibm.websphere.ras.TraceComponent;
+
 import io.smallrye.metrics.app.ConcurrentGaugeImpl;
 import io.smallrye.metrics.app.CounterImpl;
 import io.smallrye.metrics.app.ExponentiallyDecayingReservoir;
@@ -60,6 +63,7 @@ import io.smallrye.metrics.app.TimerImpl;
 
 @Vetoed
 public class MetricsRegistryImpl implements MetricRegistry {
+    private static final TraceComponent tc = Tr.register(MemberToMetricMappings.class);
 
     private final Map<String, Metadata> metadataMap = new ConcurrentHashMap<>();
 
@@ -423,12 +427,14 @@ public class MetricsRegistryImpl implements MetricRegistry {
                 default:
                     throw new IllegalStateException("Unable to infer a metric type");
             }
-//            if (metadata instanceof OriginAndMetadata) {
-//                SmallRyeMetricsLogging.log.registerMetric(metricID, type,
-//                                                          ((OriginAndMetadata) metadata).getOrigin());
-//            } else {
-//                SmallRyeMetricsLogging.log.registerMetric(metricID, type);
-//            }
+            if (metadata instanceof OriginAndMetadata) {
+                SmallRyeMetricsLogging.log.registerMetric(metricID, type,
+                                                          ((OriginAndMetadata) metadata).getOrigin());
+                Tr.info(tc, MessageFormat.format("Register metric [metricId: %s, type: %s, origin: %s]", metricID, type,
+                                                 ((OriginAndMetadata) metadata).getOrigin()));
+            } else {
+                SmallRyeMetricsLogging.log.registerMetric(metricID, type);
+            }
 
             register(metadata, m, metricID.getTagsAsList().toArray(new Tag[] {}));
         } else if (!previousMetadata.getTypeRaw().equals(metadata.getTypeRaw())) {

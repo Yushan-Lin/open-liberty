@@ -17,6 +17,7 @@
 
 package io.smallrye.metrics;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,9 +26,13 @@ import java.util.Set;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricType;
 
+import com.ibm.websphere.ras.Tr;
+import com.ibm.websphere.ras.TraceComponent;
+
 import io.smallrye.metrics.elementdesc.MemberInfo;
 
 public class MemberToMetricMappings {
+    private static final TraceComponent tc = Tr.register(MemberToMetricMappings.class);
 
     MemberToMetricMappings() {
         counters = new HashMap<>();
@@ -84,8 +89,7 @@ public class MemberToMetricMappings {
                 throw new IllegalArgumentException("Unknown metric type");
 
         }
-//        SmallRyeMetricsLogging.log.matchingMemberToMetric(member, metricID, metricType);
-        System.out.println("matchingMemberToMetric");
+        Tr.debug(tc, MessageFormat.format("Matching member %s to metric ID=%s and type=%s", member, metricID, metricType));
     }
 
 }

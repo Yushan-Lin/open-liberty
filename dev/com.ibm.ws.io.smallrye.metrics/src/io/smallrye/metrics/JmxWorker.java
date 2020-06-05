@@ -17,6 +17,7 @@
 package io.smallrye.metrics;
 
 import java.lang.management.ManagementFactory;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +33,14 @@ import javax.management.openmbean.CompositeData;
 
 import org.eclipse.microprofile.metrics.Tag;
 
+import com.ibm.websphere.ras.Tr;
+import com.ibm.websphere.ras.TraceComponent;
+
 /**
  * @author hrupp
  */
 public class JmxWorker {
+    private static final TraceComponent tc = Tr.register(JmxWorker.class);
 
     private static final String PLACEHOLDER = "%s";
     private static MBeanServer mbs;
@@ -130,8 +135,7 @@ public class JmxWorker {
                     for (ObjectName oName : objNames) {
                         String newName = entry.getMetadata().getName();
                         if (!newName.contains(PLACEHOLDER) && entry.getTags().isEmpty()) {
-//                            SmallRyeMetricsLogging.log.nameDoesNotContainPlaceHoldersOrTags(newName);
-                            System.out.println("nameDoesNotContainPlaceHoldersOrTags " + newName);
+                            Tr.warning(tc, MessageFormat.format("Name [%s] did not contain any placeholders or tags, no replacement will be done, check the configuration", name));
                         }
                         String newDisplayName = entry.getMetadata().getDisplayName();
                         String newDescription = entry.getMetadata().getDescription();

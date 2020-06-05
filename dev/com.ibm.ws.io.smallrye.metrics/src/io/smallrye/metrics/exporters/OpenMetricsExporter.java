@@ -43,6 +43,9 @@ import org.eclipse.microprofile.metrics.SimpleTimer;
 import org.eclipse.microprofile.metrics.Snapshot;
 import org.eclipse.microprofile.metrics.Timer;
 
+import com.ibm.websphere.ras.Tr;
+import com.ibm.websphere.ras.TraceComponent;
+
 import io.smallrye.metrics.ExtendedMetadata;
 import io.smallrye.metrics.MetricRegistries;
 
@@ -52,13 +55,13 @@ import io.smallrye.metrics.MetricRegistries;
  * @author Heiko W. Rupp
  */
 public class OpenMetricsExporter implements Exporter {
+    private static final TraceComponent tc = Tr.register(OpenMetricsExporter.class);
 
     // This allows to suppress the (noisy) # HELP line
     private static final String MICROPROFILE_METRICS_OMIT_HELP_LINE = "microprofile.metrics.omitHelpLine";
     // Use a prefix to provide the MicroProfile Metrics scope. If false, the scope will be added to the metrics tag
     // with the key "microprofile_scope" instead.
     public static final String SMALLRYE_METRICS_USE_PREFIX_FOR_SCOPE = "smallrye.metrics.usePrefixForScope";
-
     private static final String LF = "\n";
     private static final String GAUGE = "gauge";
     private static final String SPACE = " ";
@@ -70,7 +73,6 @@ public class OpenMetricsExporter implements Exporter {
 
     private boolean writeHelpLine;
     private boolean usePrefixForScope;
-
     // names of metrics for which we have already exported TYPE and HELP lines within one scope
     // this is to prevent writing them multiple times for the same metric name
     // this should be initialized to an empty map during start of an export and cleared after the export is finished
@@ -230,8 +232,10 @@ public class OpenMetricsExporter implements Exporter {
                 sb.append(metricBuf);
                 alreadyExportedNames.get().add(md.getName());
             } catch (Exception e) {
-//                SmallRyeMetricsLogging.log.unableToExport(key, e);
-                System.out.println("Unable to export metric " + key);
+                if (tc.isDebugEnabled()) {
+                    Tr.debug(tc, "Unable to export metric %s", key);
+                    Tr.debug(tc, e.getMessage());
+                }
             }
         }
     }
