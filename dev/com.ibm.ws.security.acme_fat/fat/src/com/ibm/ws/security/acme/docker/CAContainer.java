@@ -52,6 +52,16 @@ public abstract class CAContainer extends GenericContainer<CAContainer> {
 	 * reachable.
 	 */
 	private final int dnsManagementPort;
+	
+	/**
+	 * Number of attemps to start containers again after catch an exception
+	 */
+	protected final static int NUM_RESTART_ATTEMPTS_ON_EXCEPTION = 3;
+	
+	/**
+	 * Value to put into withStartupAttempts on container config
+	 */
+	protected final static int WITH_STARTUP_ATTEMPTS = 20;
 
 	/**
 	 * Instantiate a new {@link CAContainer} instance.
@@ -668,4 +678,20 @@ public abstract class CAContainer extends GenericContainer<CAContainer> {
 	 *             if the container does not support an OCSP responder.
 	 */
 	public abstract String getOcspResponderUrl();
+	
+	/**
+	 * Start the DNS server for this {@link CAContainer}.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if the container does not support starting the a DNS server
+	 */
+	public abstract void startDNSServer();
+
+	/**
+	 * Stop the DNS server for this {@link CAContainer}.
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if the container does not support stopping the a DNS server
+	 */
+	public abstract void stopDNSServer();
 }

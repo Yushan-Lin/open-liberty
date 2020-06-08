@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 import java.net.HttpURLConnection;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,7 +82,7 @@ public class MetricsAuthenticationTest {
     }
 
     private void waitForSecurityPrerequisites(LibertyServer server) throws Exception {
-        Assert.assertNotNull("LTPA keys are not created/ready within timeout period of " + TIMEOUT + "ms.", server.waitForStringInLog("CWWKS4104A.*|CWWKS4105I.*", TIMEOUT));
+        assertNotNull("LTPA keys are not created/ready within timeout period of " + TIMEOUT + "ms.", server.waitForStringInLog("CWWKS4104A.*|CWWKS4105I.*", TIMEOUT));
         assertNotNull("TCP Channel defaultHttpEndpoint has not started", server.waitForStringInLog("CWWKO0219I.*defaultHttpEndpoint"));
         assertNotNull("TCP Channel defaultHttpEndpoint-ssl has not started", server.waitForStringInLog("CWWKO0219I.*defaultHttpEndpoint-ssl"));
     }
