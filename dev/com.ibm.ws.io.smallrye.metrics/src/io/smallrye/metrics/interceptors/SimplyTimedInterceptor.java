@@ -52,7 +52,6 @@ public class SimplyTimedInterceptor {
 
     @Inject
     SimplyTimedInterceptor() {
-        System.out.println("SimplyTimedInterceptor!");
         this.registry = MetricRegistries.get(MetricRegistry.Type.APPLICATION);
     }
 

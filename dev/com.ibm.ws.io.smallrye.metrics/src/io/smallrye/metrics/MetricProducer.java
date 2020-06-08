@@ -75,7 +75,6 @@ public class MetricProducer {
 
     @Produces
     Counter getCounter(InjectionPoint ip) {
-        System.out.println("GETCOUNTER");
         Metadata metadata = getMetadata(ip, MetricType.COUNTER);
         Tag[] tags = getTags(ip);
         return this.applicationRegistry.counter(metadata, tags);

@@ -48,7 +48,6 @@ public class CountedInterceptor {
 
     @Inject
     CountedInterceptor() {
-        System.out.println("CountedInterceptor!");
         this.registry = MetricRegistries.get(MetricRegistry.Type.APPLICATION);
     }
 
@@ -75,7 +74,6 @@ public class CountedInterceptor {
         ids.stream().map(metricID -> {
             Counter metric = registry.getCounters().get(metricID);
             if (metric == null) {
-                System.out.println("noMetricFoundInRegistry Counter");
                 throw new IllegalStateException(MessageFormat.format("No metric of type %s and ID %s found in registry", MetricType.COUNTER, metricID));
             }
             return metric;

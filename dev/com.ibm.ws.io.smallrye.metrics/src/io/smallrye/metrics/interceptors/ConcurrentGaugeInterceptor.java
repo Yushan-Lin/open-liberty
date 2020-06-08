@@ -49,7 +49,6 @@ public class ConcurrentGaugeInterceptor {
 
     @Inject
     ConcurrentGaugeInterceptor() {
-        System.out.println("GAUGE!");
         this.registry = MetricRegistries.get(MetricRegistry.Type.APPLICATION);
     }
 

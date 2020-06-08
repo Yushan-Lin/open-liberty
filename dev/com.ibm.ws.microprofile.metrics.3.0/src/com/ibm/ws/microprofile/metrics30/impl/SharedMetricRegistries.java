@@ -28,10 +28,6 @@ public class SharedMetricRegistries {
         MetricRegistries.dropAll();
     }
 
-//don't see this being used
-//    public static Set<String> names() {
-//        return REGISTRIES.keySet();
-//    }
     public static void remove(String key) {
         Type type = typeOf(key);
         MetricRegistries.drop(type);

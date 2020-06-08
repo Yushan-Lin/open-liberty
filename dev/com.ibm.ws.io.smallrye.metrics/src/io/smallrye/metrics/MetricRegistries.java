@@ -38,7 +38,6 @@ public class MetricRegistries {
     @RegistryType(type = MetricRegistry.Type.APPLICATION)
     @ApplicationScoped
     public MetricRegistry getApplicationRegistry() {
-        System.out.println("APPLICATION");
         return get(MetricRegistry.Type.APPLICATION);
     }
 
@@ -46,7 +45,6 @@ public class MetricRegistries {
     @RegistryType(type = MetricRegistry.Type.BASE)
     @ApplicationScoped
     public MetricRegistry getBaseRegistry() {
-        System.out.println("BASE");
         return get(MetricRegistry.Type.BASE);
     }
 
@@ -54,7 +52,6 @@ public class MetricRegistries {
     @RegistryType(type = MetricRegistry.Type.VENDOR)
     @ApplicationScoped
     public MetricRegistry getVendorRegistry() {
-        System.out.println("VENDOR");
         return get(MetricRegistry.Type.VENDOR);
     }
 
@@ -62,7 +59,6 @@ public class MetricRegistries {
         return registries.computeIfAbsent(type, t -> new MetricsRegistryImpl(type));
     }
 
-//    @PreDestroy
     public void cleanUp() {
         registries.remove(MetricRegistry.Type.APPLICATION);
     }

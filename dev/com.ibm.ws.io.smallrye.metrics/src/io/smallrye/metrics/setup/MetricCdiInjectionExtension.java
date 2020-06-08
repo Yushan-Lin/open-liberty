@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,12 +63,13 @@ import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.osgi.service.component.annotations.Component;
 
+import com.ibm.websphere.ras.Tr;
+import com.ibm.websphere.ras.TraceComponent;
 import com.ibm.ws.cdi.extension.WebSphereCDIExtension;
 
 import io.smallrye.metrics.MetricProducer;
 import io.smallrye.metrics.MetricRegistries;
 import io.smallrye.metrics.MetricsRequestHandler;
-//import io.smallrye.metrics.SmallRyeMetricsLogging;
 import io.smallrye.metrics.TagsUtils;
 import io.smallrye.metrics.elementdesc.adapter.BeanInfoAdapter;
 import io.smallrye.metrics.elementdesc.adapter.cdi.CDIBeanInfoAdapter;
@@ -89,6 +91,7 @@ import io.smallrye.metrics.interceptors.TimedInterceptor;
 @SuppressWarnings("deprecation")
 @Component(service = WebSphereCDIExtension.class, immediate = true)
 public class MetricCdiInjectionExtension implements Extension, WebSphereCDIExtension {
+    private static final TraceComponent tc = Tr.register(MetricCdiInjectionExtension.class);
 
     private static final AnnotationLiteral<MetricsBinding> METRICS_BINDING = new AnnotationLiteral<MetricsBinding>() {
     };
@@ -103,13 +106,11 @@ public class MetricCdiInjectionExtension implements Extension, WebSphereCDIExten
     private final List<Class<?>> metricsInterfaces;
 
     public MetricCdiInjectionExtension() {
-        System.out.println("LOGGED!");
         metricsInterfaces = new ArrayList<>();
     }
 
     private void addInterceptorBindings(@Observes BeforeBeanDiscovery bbd, BeanManager manager) {
-//        SmallRyeMetricsLogging.log.logSmallRyeMetricsVersion(getImplementationVersion().orElse("unknown"));
-        System.out.println("get version");
+        Tr.info(tc, MessageFormat.format("MicroProfile: Metrics activated (SmallRye Metrics version: %s)", getImplementationVersion()));
         String extensionName = MetricCdiInjectionExtension.class.getName();
 
         // It seems that fraction deployment module cannot be picked up as a CDI bean archive - see also SWARM-1725
@@ -176,15 +177,13 @@ public class MetricCdiInjectionExtension implements Extension, WebSphereCDIExten
     }
 
     private void findMetricProducerFields(@Observes ProcessProducerField<? extends Metric, ?> ppf) {
-//        SmallRyeMetricsLogging.log.producerFieldDiscovered(ppf.getAnnotatedProducerField());
-        System.out.println("discover producer " + ppf.getAnnotatedProducerField());
+        Tr.debug(tc, MessageFormat.format("Metric producer field discovered: %s", ppf.getAnnotatedProducerField()));
         metricsFromProducers.put(ppf.getBean(), ppf.getAnnotatedProducerField());
     }
 
     private void findMetricProducerMethods(@Observes ProcessProducerMethod<? extends Metric, ?> ppm) {
         if (!ppm.getBean().getBeanClass().equals(MetricProducer.class)) {
-            System.out.println("discover annotated producer " + ppm.getAnnotatedProducerMethod());
-//            SmallRyeMetricsLogging.log.producerMethodDiscovered(ppm.getAnnotatedProducerMethod());
+            Tr.debug(tc, MessageFormat.format("Metric producer method discovered: %s", ppm.getAnnotatedProducerMethod()));
             metricsFromProducers.put(ppm.getBean(), ppm.getAnnotatedProducerMethod());
         }
     }
@@ -192,7 +191,6 @@ public class MetricCdiInjectionExtension implements Extension, WebSphereCDIExten
     void registerMetrics(@Observes AfterDeploymentValidation adv, BeanManager manager) {
 
         // Produce and register custom metrics
-        System.out.println("registerMetrics");
         MetricRegistry registry = MetricRegistries.get(MetricRegistry.Type.APPLICATION);
         MetricName name = getReference(manager, MetricName.class);
         BeanInfoAdapter<Class<?>> beanInfoAdapter = new CDIBeanInfoAdapter();
@@ -293,8 +291,7 @@ public class MetricCdiInjectionExtension implements Extension, WebSphereCDIExten
                         return Optional.ofNullable(properties.getProperty("smallrye.metrics.version"));
                     }
                 } catch (IOException e) {
-//                    SmallRyeMetricsLogging.log.unableToDetectVersion();
-                    System.out.println("wrong version ");
+                    Tr.warning(tc, "Unable to detect version of SmallRye Metrics");
                 }
                 return Optional.empty();
             }

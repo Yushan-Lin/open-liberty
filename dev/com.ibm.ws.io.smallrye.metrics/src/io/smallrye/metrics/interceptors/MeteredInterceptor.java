@@ -50,7 +50,6 @@ public class MeteredInterceptor {
 
     @Inject
     MeteredInterceptor() {
-        System.out.println("METER!");
         this.registry = MetricRegistries.get(MetricRegistry.Type.APPLICATION);
     }
 

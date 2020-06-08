@@ -52,7 +52,6 @@ public class TimedInterceptor {
 
     @Inject
     TimedInterceptor() {
-        System.out.println("TimedInterceptor!");
         this.registry = MetricRegistries.get(MetricRegistry.Type.APPLICATION);
     }
 

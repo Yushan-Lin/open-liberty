@@ -51,7 +51,6 @@ public class GaugeRegistrationInterceptor {
 
     @Inject
     GaugeRegistrationInterceptor(MetricRegistry registry) {
-        System.out.println("GaugeRegistrationInterceptor!");
         this.registry = registry;
         this.resolver = new MetricResolver();
     }

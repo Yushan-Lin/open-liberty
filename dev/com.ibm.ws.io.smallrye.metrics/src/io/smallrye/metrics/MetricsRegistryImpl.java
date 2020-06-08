@@ -87,7 +87,6 @@ public class MetricsRegistryImpl implements MetricRegistry {
     }
 
     public MetricsRegistryImpl(Type registryType) {
-        System.out.println("INSTANTIATE " + registryType.getName());
         this.registryType = registryType;
         if (registryType == Type.APPLICATION) {
             memberToMetricMappings = new MemberToMetricMappings();
@@ -428,12 +427,10 @@ public class MetricsRegistryImpl implements MetricRegistry {
                     throw new IllegalStateException("Unable to infer a metric type");
             }
             if (metadata instanceof OriginAndMetadata) {
-                SmallRyeMetricsLogging.log.registerMetric(metricID, type,
-                                                          ((OriginAndMetadata) metadata).getOrigin());
                 Tr.info(tc, MessageFormat.format("Register metric [metricId: %s, type: %s, origin: %s]", metricID, type,
                                                  ((OriginAndMetadata) metadata).getOrigin()));
             } else {
-                SmallRyeMetricsLogging.log.registerMetric(metricID, type);
+                Tr.debug(tc, MessageFormat.format("Register metric [metricId: %s, type: %s]", metricID, type));
             }
 
             register(metadata, m, metricID.getTagsAsList().toArray(new Tag[] {}));
@@ -464,7 +461,7 @@ public class MetricsRegistryImpl implements MetricRegistry {
 
     @Override
     public boolean remove(String metricName) {
-//        SmallRyeMetricsLogging.log.removeMetricsByName(metricName);
+        Tr.debug(tc, MessageFormat.format("Removing metrics with [name: %s]", metricName));
         // iterate over all metricID's in the map and remove the ones with this name
         for (MetricID metricID : metricMap.keySet()) {
             if (metricID.getName().equals(metricName)) {
@@ -472,20 +469,18 @@ public class MetricsRegistryImpl implements MetricRegistry {
             }
         }
         // dispose of the metadata as well
-        System.out.println("REMOVE " + metricName);
         return metadataMap.remove(metricName) != null;
     }
 
     @Override
     public synchronized boolean remove(MetricID metricID) {
-        System.out.println("REMOVE " + metricID);
         if (metricMap.containsKey(metricID)) {
-//            SmallRyeMetricsLogging.log.removeMetricsById(metricID);
+            Tr.debug(tc, MessageFormat.format("Removing metrics with [id: %s]", metricID));
             metricMap.remove(metricID);
             // remove the metadata as well if this is the last metric of this name to be removed
             String name = metricID.getName();
             if (metricMap.keySet().stream().noneMatch(id -> id.getName().equals(name))) {
-//                SmallRyeMetricsLogging.log.removeMetadata(name);
+                Tr.debug(tc, MessageFormat.format("Removing metadata with [name: %s]", name));
                 metadataMap.remove(name);
             }
             return true;
