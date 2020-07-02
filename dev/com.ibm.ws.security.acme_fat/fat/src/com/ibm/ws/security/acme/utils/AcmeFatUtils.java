@@ -314,6 +314,9 @@ public class AcmeFatUtils {
 		 */
 		AcmeCA acmeCA = clone.getAcmeCA();
 		acmeCA.setDomain(Arrays.asList(domains));
+		ArrayList<String> accounts = new ArrayList<String>();
+		accounts.add("mailto:pacman@mail.com");
+		acmeCA.setAccountContact(accounts);
 		configureAcmeCaConnection(caContainer.getAcmeDirectoryURI(useAcmeURIs), acmeCA);
 		if (disableRenewWindow) {
 			/*
@@ -473,6 +476,16 @@ public class AcmeFatUtils {
 		 * Longer timeout for local runs, similar to timeout for builds
 		 */
 		assertNotNull("ACME did not create the certificate.", server.waitForStringInLogUsingMark("CWPKI2007I", 120000));
+	}
+	
+	/**
+	 * Wait for the ACME service to report that a certificate has been revoked
+	 * 
+	 * @param server
+	 *            The server to check.
+	 */
+	public static final void waitForAcmeToRevokeCertificate(LibertyServer server) {
+		assertNotNull("ACME did not revoke the certificate.", server.waitForStringInLog("CWPKI2038I", 120000));
 	}
 
 	/**
@@ -673,7 +686,7 @@ public class AcmeFatUtils {
 		File domainKey = new File(server.getServerRoot() + "/resources/security/acmeDomainKey.pem");
 		List<Object[]> failedFiles = new ArrayList<Object[]>();
 		int attempt = 0;
-		int retries = 3;
+		int retries = 12;
 		/*
 		 * Keep attempting to delete until we have either deleted all the files, or
 		 * exhausted all attempts.
@@ -713,7 +726,7 @@ public class AcmeFatUtils {
 		}
 		if (!failedFiles.isEmpty()) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("Failed to delete ACME files. Future tests may fail. The following files failed: ");
+			sb.append("Failed to delete ACME files after " + retries + ". Future tests may fail. The following files failed: ");
 			for (Object[] failure : failedFiles) {
 				File f = (File) failure[0];
 				IOException ioe = (IOException) failure[1];
@@ -776,8 +789,8 @@ public class AcmeFatUtils {
 	 * @param startingCertificateChain
 	 * @throws Exception
 	 */
-	public static final void waitForNewCert(LibertyServer server, CAContainer acmeContainer, Certificate[] startingCertificateChain) throws Exception {
-		waitForNewCert(server, acmeContainer, startingCertificateChain, SCHEDULE_TIME);
+	public static final Certificate[]  waitForNewCert(LibertyServer server, CAContainer acmeContainer, Certificate[] startingCertificateChain) throws Exception {
+		return waitForNewCert(server, acmeContainer, startingCertificateChain, SCHEDULE_TIME);
 	}
 
 	/**
@@ -788,7 +801,7 @@ public class AcmeFatUtils {
 	 * @param timeout
 	 * @throws Exception
 	 */
-	public static final void waitForNewCert(LibertyServer server, CAContainer acmeContainer, Certificate[] startingCertificateChain, long timeout) throws Exception {
+	public static final Certificate[]  waitForNewCert(LibertyServer server, CAContainer acmeContainer, Certificate[] startingCertificateChain, long timeout) throws Exception {
 		Certificate[] endingCertificateChain;
 		long startTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() < startTime + timeout) {
@@ -809,6 +822,8 @@ public class AcmeFatUtils {
 		String serial2 = ((X509Certificate) endingCertificateChain[0]).getSerialNumber().toString(16);
 
 		assertThat("Expected a new certificate.", serial1, not(equalTo(serial2)));	
+		
+		return endingCertificateChain;
 	}
 	
 	/**
@@ -825,5 +840,24 @@ public class AcmeFatUtils {
  			return true;
  		}
  		return false;
+ 	}
+ 	
+ 	/**
+ 	 * Handle adding CWPKI2045W as an allowed warning message to all stopServer requests.
+ 	 * 
+ 	 * @param server
+ 	 * @param msgs
+ 	 * @throws Exception
+ 	 */
+ 	public static void stopServer(LibertyServer server, String...msgs) throws Exception{
+ 		/*
+ 		 * If the test Pebble or Boulder container is slightly ahead of our test machine, we can
+ 		 * get a certificate that is in "the future" and that will produce a warning message.
+ 		 */
+ 		String alwaysAdd = "CWPKI2045W";
+ 		
+ 		List<String> tempList = new ArrayList<String>(Arrays.asList(msgs));
+		tempList.add(alwaysAdd);
+		server.stopServer(tempList.toArray(new String[tempList.size()]));
  	}
 }

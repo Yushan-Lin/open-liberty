@@ -23,4 +23,4 @@ Subsystem-Name: MicroProfile Metrics 3.0
  com.ibm.ws.org.jboss.logging
  
 kind=noship
-edition=core
+edition=full

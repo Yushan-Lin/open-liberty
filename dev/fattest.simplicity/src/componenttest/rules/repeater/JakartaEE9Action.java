@@ -26,6 +26,7 @@ import com.ibm.websphere.simplicity.ShrinkHelper;
 import com.ibm.websphere.simplicity.log.Log;
 import com.ibm.ws.fat.util.SharedServer;
 import com.ibm.ws.jakarta.transformer.JakartaTransformer;
+
 import componenttest.custom.junit.runner.Mode.TestMode;
 import componenttest.custom.junit.runner.RepeatTestFilter;
 import componenttest.topology.impl.LibertyServer;
@@ -51,30 +52,31 @@ public class JakartaEE9Action extends FeatureReplacementAction {
     // features, which is necessary for the FATs to run.
 
     static final String[] EE9_FEATURES_ARRAY = {
-      "jakartaee-9.0",
-      "webProfile-9.0",
-      "jakartaeeClient-9.0",
-      "componenttest-2.0", // replaces "componenttest-1.0"
-      "beanValidation-3.0",
-      "cdi-3.0",
-      "concurrent-2.0",
-      "el-4.0",
-      "javaMail-2.0",
-      "jaxb-3.0",
-      "jaxrs-3.0",
-      "jaxrsClient-3.0",
-      "jpa-3.0",
-      "jsonp-2.0",
-      "jsonb-2.0",
-      "jsonpContainer-2.0",
-      "jsonbContainer-2.0",
-      "jsf-3.0",
-      "jsp-3.0",
-      "servlet-5.0"
+                                                 "jakartaee-9.0",
+                                                 "webProfile-9.0",
+                                                 "jakartaeeClient-9.0",
+                                                 "componenttest-2.0", // replaces "componenttest-1.0"
+                                                 "beanValidation-3.0",
+                                                 "cdi-3.0",
+                                                 "concurrent-2.0",
+                                                 "el-4.0",
+                                                 "javaMail-2.0",
+                                                 "jaxb-3.0",
+                                                 "jaxrs-3.0",
+                                                 "jaxrsClient-3.0",
+                                                 "jca-2.0",
+                                                 "jpa-3.0",
+                                                 "jsonp-2.0",
+                                                 "jsonb-2.0",
+                                                 "jsonpContainer-2.0",
+                                                 "jsonbContainer-2.0",
+                                                 "jsf-3.0",
+                                                 "jsp-3.0",
+                                                 "managedBeans-2.0",
+                                                 "servlet-5.0"
     };
 
-    public static final Set<String> EE9_FEATURE_SET =
-        Collections.unmodifiableSet(new HashSet<>(Arrays.asList(EE9_FEATURES_ARRAY)));
+    public static final Set<String> EE9_FEATURE_SET = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(EE9_FEATURES_ARRAY)));
 
     private static Set<String> removeFeatures() {
         Set<String> removeFeatures = new HashSet<>(EE7FeatureReplacementAction.EE7_FEATURE_SET);
@@ -85,7 +87,7 @@ public class JakartaEE9Action extends FeatureReplacementAction {
 
     public JakartaEE9Action() {
         // Remove the EE7 and EE8 features; replace them with the EE9 features
-        super( JakartaEE9Action.removeFeatures(), EE9_FEATURE_SET );
+        super(JakartaEE9Action.removeFeatures(), EE9_FEATURE_SET);
         withMinJavaLevel(8);
         forceAddFeatures(false);
         withID(ID);
@@ -170,15 +172,32 @@ public class JakartaEE9Action extends FeatureReplacementAction {
     }
 
     /**
-     * Invoke the Jakarta transformer on an application (ear or war).
+     * Invoke the Jakarta transformer on an application (ear or war or jar).
      *
      * A backup of the original application is placed under "&lt;server&gt;/backup".
-     * ".jakarta" is appended to name the initially transformed application.  However,
+     * ".jakarta" is appended to name the initially transformed application. However,
      * that application is renamed to the initial application name.
      *
      * @param appPath The application path to be transformed to Jakarta
      */
     public static void transformApp(Path appPath) {
+        transformApp(appPath, null);
+    }
+
+    /**
+     * Invoke the Jakarta transformer on an application (ear or war or jar).
+     * to create a new transformed copy.
+     *
+     * If the destination Path is null, the application is transformed into
+     * the same file as the source. A backup of the original application is placed
+     * under "&lt;server&gt;/backup". The extension ".jakarta" is appended to
+     * name the initially transformed application. However,
+     * that application is renamed to the initial application name.
+     *
+     * @param appPath    The application path of file to be transformed to Jakarta
+     * @param newAppPath The application path of the transformed file (or <code>null<code>)
+     */
+    public static void transformApp(Path appPath, Path newAppPath) {
         final String m = "transformApp";
         Log.info(c, m, "Transforming app: " + appPath);
 
@@ -199,19 +218,23 @@ public class JakartaEE9Action extends FeatureReplacementAction {
             throw new RuntimeException(mesg, e);
         }
 
-        Path outputPath = appPath.resolveSibling(appPath.getFileName() + ".jakarta");
+        Path outputPath;
+        Path backupPath = null;
+        if (newAppPath == null) {
+            outputPath = appPath.resolveSibling(appPath.getFileName() + ".jakarta");
 
-        // Create backup directory
-        Path serverPath = appPath.getParent().getParent();
-        Path backupPath = serverPath.resolve("backup");
-        try {
-            if (!Files.exists(backupPath)) {
-                Files.createDirectory(backupPath); // throws IOException
+            backupPath = appPath.getParent().getParent().resolve("backup");
+            try {
+                if (!Files.exists(backupPath)) {
+                    Files.createDirectory(backupPath); // throws IOException
+                }
+            } catch (IOException e) {
+                Log.info(c, m, "Unable to create backup directory.");
+                Log.error(c, m, e);
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            Log.info(c, m, "Unable to create backup directory.");
-            Log.error(c, m, e);
-            throw new RuntimeException(e);
+        } else {
+            outputPath = newAppPath;
         }
 
         // The rules are copied from 'open-liberty/dev/wlp-jakartaee-transform/rules' to
@@ -256,14 +279,16 @@ public class JakartaEE9Action extends FeatureReplacementAction {
             JakartaTransformer.main(args);
 
             if (outputPath.toFile().exists()) {
-                Path backupAppPath = backupPath.resolve(appPath.getFileName());
-                if (!Files.exists(backupAppPath)) {
-                    Files.createFile(backupAppPath);
+                if (backupPath != null) {
+                    Path backupAppPath = backupPath.resolve(appPath.getFileName());
+                    if (!Files.exists(backupAppPath)) {
+                        Files.createFile(backupAppPath);
+                    }
+                    // move original to backup
+                    Files.move(appPath, backupAppPath, StandardCopyOption.REPLACE_EXISTING);
+                    // rename jakarta app to the original filename
+                    Files.move(outputPath, appPath);
                 }
-                // move original to backup
-                Files.move(appPath, backupAppPath, StandardCopyOption.REPLACE_EXISTING);
-                // rename jakarta app to the original filename
-                Files.move(outputPath, appPath);
             } else {
                 throw new RuntimeException("Jakarta transformer failed for: " + appPath);
             }
