@@ -11,7 +11,7 @@
 /**
  *
  */
-@org.osgi.annotation.versioning.Version("3.0")
+@org.osgi.annotation.versioning.Version("1.0")
 @TraceOptions(traceGroup = "METRICS", messageBundle = "com.ibm.ws.microprofile.metrics.resources.Metrics")
 package com.ibm.ws.microprofile.metrics;
 

@@ -13,14 +13,16 @@ Subsystem-Name: MicroProfile Metrics 3.0
  com.ibm.websphere.appserver.monitor-1.0, \
  com.ibm.websphere.appserver.servlet-4.0; ibm.tolerates:=3.1,\
  com.ibm.websphere.appserver.mpConfig-1.4; ibm.tolerates:=1.3,\
- com.ibm.ws.io.smallrye.metrics
- 
+ com.ibm.websphere.appserver.jaxrs-2.1; ibm.tolerates:=2.0
+  
 -bundles=com.ibm.ws.require.java8, \
  com.ibm.ws.microprofile.metrics.common, \
  com.ibm.ws.microprofile.metrics.3.0, \
  com.ibm.ws.microprofile.metrics.private.3.0, \
  com.ibm.ws.microprofile.metrics.public.3.0,\
- com.ibm.ws.org.jboss.logging
- 
+ com.ibm.ws.org.jboss.logging,\
+ com.ibm.ws.io.smallrye.metrics; location:="dev/api/stable/,lib/",\
+ com.ibm.websphere.javaee.jsonp.1.1; location:="dev/api/spec/,lib/"; mavenCoordinates="javax.json:javax.json-api:1.1.3", \
+ com.ibm.ws.org.glassfish.json.1.1
 kind=noship
 edition=full
