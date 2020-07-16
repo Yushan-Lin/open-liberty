@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 task unzip(type: Copy) {
-    from zipTree(file("$projectDir/lib/logstash-5.5.0.zip"))
+    from zipTree(file("$projectDir/lib/logstash-7.8.0.zip"))
     into file("$projectDir/publish/files/")
 }
 
