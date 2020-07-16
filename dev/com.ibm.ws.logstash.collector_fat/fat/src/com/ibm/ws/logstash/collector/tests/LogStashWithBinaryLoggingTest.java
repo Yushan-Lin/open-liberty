@@ -33,8 +33,6 @@ import com.ibm.websphere.simplicity.ShrinkHelper;
 import com.ibm.websphere.simplicity.log.Log;
 
 import componenttest.annotation.AllowedFFDC;
-import componenttest.annotation.MaximumJavaLevel;
-import componenttest.annotation.MinimumJavaLevel;
 import componenttest.custom.junit.runner.FATRunner;
 import componenttest.custom.junit.runner.Mode;
 import componenttest.custom.junit.runner.Mode.TestMode;
@@ -48,8 +46,6 @@ import componenttest.topology.utils.FileUtils;
  */
 @RunWith(FATRunner.class)
 @Mode(TestMode.LITE)
-@MinimumJavaLevel(javaLevel = 8)
-@MaximumJavaLevel(javaLevel = 8)
 public class LogStashWithBinaryLoggingTest extends LogstashCollectorTest {
     private static LibertyServer server = LibertyServerFactory.getLibertyServer("LibertyHPELServer");
     protected static Machine machine = null;
