@@ -17,12 +17,15 @@
 
 package io.smallrye.metrics.jaxrs;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 
@@ -43,7 +46,7 @@ import org.eclipse.microprofile.metrics.Tag;
  * {@link JaxRsMetricsServletFilter} and {@link JaxRsMetricsFilter} to handle incoming requests.
  * {@link JaxRsMetricsServletFilter} must run first, but this will probably be the case always.
  */
-public class JaxRsMetricsFilter implements ContainerRequestFilter {
+public class JaxRsMetricsFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
     @Context
     ResourceInfo resourceInfo;
@@ -51,7 +54,7 @@ public class JaxRsMetricsFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         MetricID metricID = getMetricID(resourceInfo.getResourceClass(),
-                resourceInfo.getResourceMethod());
+                                        resourceInfo.getResourceMethod());
         // store the MetricID so that the servlet filter can update the metric
         requestContext.setProperty("smallrye.metrics.jaxrs.metricID", metricID);
     }
@@ -59,18 +62,23 @@ public class JaxRsMetricsFilter implements ContainerRequestFilter {
     private MetricID getMetricID(Class<?> resourceClass, Method resourceMethod) {
         Tag classTag = new Tag("class", resourceClass.getName());
         String methodName = resourceMethod.getName();
-        String encodedParameterNames = Arrays.stream(resourceMethod.getParameterTypes())
-                .map(clazz -> {
-                    if (clazz.isArray()) {
-                        return clazz.getComponentType().getName() + "[]";
-                    } else {
-                        return clazz.getName();
-                    }
-                })
-                .collect(Collectors.joining("_"));
+        String encodedParameterNames = Arrays.stream(resourceMethod.getParameterTypes()).map(clazz -> {
+            if (clazz.isArray()) {
+                return clazz.getComponentType().getName() + "[]";
+            } else {
+                return clazz.getName();
+            }
+        }).collect(Collectors.joining("_"));
         String methodTagValue = encodedParameterNames.isEmpty() ? methodName : methodName + "_" + encodedParameterNames;
         Tag methodTag = new Tag("method", methodTagValue);
         return new MetricID("REST.request", classTag, methodTag);
     }
 
+    @Override
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        // If the response filter is called, it means the processing did NOT end with
+        // an unmapped exception. Store this information for the servlet filter so
+        // that it knows which metric to update.
+        requestContext.setProperty("smallrye.metrics.jaxrs.successful", true);
+    }
 }
