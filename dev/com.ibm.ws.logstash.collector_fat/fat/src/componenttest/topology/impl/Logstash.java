@@ -117,8 +117,7 @@ public class Logstash implements LogMonitorClient {
     public void start() throws Exception {
         final String method = "start";
         Log.entering(c, method);
-        String winCommands[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose",
-                                 "-l", ".\\logs" };
+        String winCommands[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose" };
 
         String unixCommands[] = { "./bin/logstash", "-f", CONFIG_FILENAME, "--verbose", "-l", "./logs" };
 
@@ -198,8 +197,7 @@ public class Logstash implements LogMonitorClient {
     public void startWithJsonOutput() throws Exception {
         final String method = "start";
         Log.entering(c, method);
-        String winCommandsJson[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose",
-                                     "-l", ".\\logs" };
+        String winCommandsJson[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose" };
         String unixCommandsJson[] = { "./bin/logstash", "-f", CONFIG_FILENAME, "--verbose", "-l",
                                       "./logs" };
         if (isWindows()) {

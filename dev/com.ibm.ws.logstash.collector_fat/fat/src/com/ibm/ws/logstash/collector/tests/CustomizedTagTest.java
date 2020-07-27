@@ -32,6 +32,8 @@ import com.ibm.websphere.simplicity.ShrinkHelper;
 import com.ibm.websphere.simplicity.log.Log;
 
 import componenttest.annotation.AllowedFFDC;
+import componenttest.annotation.MaximumJavaLevel;
+import componenttest.annotation.MinimumJavaLevel;
 import componenttest.custom.junit.runner.FATRunner;
 import componenttest.custom.junit.runner.Mode;
 import componenttest.custom.junit.runner.Mode.TestMode;
@@ -40,6 +42,8 @@ import componenttest.topology.impl.LibertyServerFactory;
 import componenttest.topology.impl.Logstash;
 import componenttest.topology.utils.FileUtils;
 
+@MinimumJavaLevel(javaLevel = 8)
+@MaximumJavaLevel(javaLevel = 11)
 @RunWith(FATRunner.class)
 @Mode(TestMode.LITE)
 public class CustomizedTagTest extends LogstashCollectorTest {
