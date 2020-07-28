@@ -422,7 +422,7 @@ public class Logstash implements LogMonitorClient {
         RemoteFile f = null;
 
         Log.info(c, "waitForFileExistence", filename + " started");
-        for (int i = 1; (i <= 40) && (f == null); i++) {
+        for (int i = 1; (i <= 80) && (f == null); i++) {
             try {
                 f = LibertyFileManager.getLibertyFile(machine, filename);
             } catch (Exception e) {
