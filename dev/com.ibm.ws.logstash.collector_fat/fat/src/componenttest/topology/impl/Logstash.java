@@ -155,7 +155,7 @@ public class Logstash implements LogMonitorClient {
         Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
         Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
         Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
-        if (JavaInfo.JAVA_VERSION >= 9) {
+        if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
             pb.environment().put("JAVA_OPTS", JAVA9_ARGS);
             Log.info(c, method, "set env JAVA_OPTS=" + JAVA9_ARGS);
         }
@@ -204,7 +204,7 @@ public class Logstash implements LogMonitorClient {
             ProcessBuilder pb = new ProcessBuilder(winCommandsJson);
             pb.directory(new File(AUTOFVT_DIR + WIN_LOGSTASH_DIR));
             pb.redirectErrorStream(true);
-            if (JavaInfo.JAVA_VERSION >= 9)
+            if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11)
                 pb.environment().put("LS_JAVA_OPTS", JAVA9_ARGS);
             process = pb.start();
             reader = new OutputReader(process.getInputStream());
@@ -222,7 +222,7 @@ public class Logstash implements LogMonitorClient {
             ProcessBuilder pb = new ProcessBuilder(unixCommandsJson);
             pb.directory(new File(AUTOFVT_DIR + UNIX_LOGSTASH_DIR));
             pb.redirectErrorStream(true);
-            if (JavaInfo.JAVA_VERSION >= 9)
+            if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11)
                 pb.environment().put("LS_JAVA_OPTS", JAVA9_ARGS);
             process = pb.start();
             reader = new OutputReader(process.getInputStream());
