@@ -116,7 +116,8 @@ public class Logstash implements LogMonitorClient {
     public void start() throws Exception {
         final String method = "start";
         Log.entering(c, method);
-        String winCommands[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose" };
+        String winCommands[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose",
+                                 "-l", ".\\logs" };
 
         String unixCommands[] = { "./bin/logstash", "-f", CONFIG_FILENAME, "--verbose", "-l", "./logs" };
 
@@ -196,7 +197,8 @@ public class Logstash implements LogMonitorClient {
     public void startWithJsonOutput() throws Exception {
         final String method = "start";
         Log.entering(c, method);
-        String winCommandsJson[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose" };
+        String winCommandsJson[] = { "cmd.exe", "/c", "bin\\logstash.bat", "-f", CONFIG_FILENAME, "--verbose",
+                                     "-l", ".\\logs" };
         String unixCommandsJson[] = { "./bin/logstash", "-f", CONFIG_FILENAME, "--verbose", "-l",
                                       "./logs" };
         if (isWindows()) {
@@ -423,12 +425,15 @@ public class Logstash implements LogMonitorClient {
 
         Log.info(c, "waitForFileExistence", filename + " started");
         for (int i = 1; (i <= 80) && (f == null); i++) {
+            Log.info(c, "waitForFileExistence", String.valueOf(i));
             try {
                 f = LibertyFileManager.getLibertyFile(machine, filename);
             } catch (Exception e) {
+                Log.error(c, "waitForFileExistence 1", e);
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e1) {
+                    Log.error(c, "waitForFileExistence 2", e1);
                 }
             }
         }
