@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
@@ -123,6 +124,7 @@ public class Logstash implements LogMonitorClient {
 
         ProcessBuilder pb = null;
         File logsDir = null;
+        Log.info(c, method, AUTOFVT_DIR + logsDir);
         if (isWindows()) {
             pb = new ProcessBuilder(winCommands);
             pb.directory(new File(AUTOFVT_DIR + WIN_LOGSTASH_DIR));
@@ -148,13 +150,13 @@ public class Logstash implements LogMonitorClient {
         // Clean logsDir
         FileUtils.recursiveDelete(logsDir);
 
-        //Set the System variable to overwrite the Java Security for starting logstash
-//        Map<String, String> env = pb.environment();
-//        String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
-//        env.put("LS_JAVA_OPTS", ls_java_opts_value);
-//        Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
-//        Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
-//        Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
+//        Set the System variable to overwrite the Java Security for starting logstash
+        Map<String, String> env = pb.environment();
+        String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
+        env.put("LS_JAVA_OPTS", ls_java_opts_value);
+        Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
+        Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
+        Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
         if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
             pb.environment().put("JAVA_OPTS", JAVA9_ARGS);
             Log.info(c, method, "set env JAVA_OPTS=" + JAVA9_ARGS);
@@ -429,11 +431,9 @@ public class Logstash implements LogMonitorClient {
             try {
                 f = LibertyFileManager.getLibertyFile(machine, filename);
             } catch (Exception e) {
-                Log.error(c, "waitForFileExistence 1", e);
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e1) {
-                    Log.error(c, "waitForFileExistence 2", e1);
                 }
             }
         }
