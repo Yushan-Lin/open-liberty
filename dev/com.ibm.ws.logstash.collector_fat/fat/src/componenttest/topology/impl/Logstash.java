@@ -49,7 +49,7 @@ public class Logstash implements LogMonitorClient {
     protected final HashMap<String, Long> logOffsets = new HashMap<String, Long>();
 
     public static final String JAVA_SECURITY_OVERWRITE_FILE = "java.security";
-    static final String AUTOFVT_DIR = System.getProperty("user.dir");
+    static String AUTOFVT_DIR = System.getProperty("user.dir");
     public static String CONFIG_FILENAME = "logstash.conf";
     static final String CONFIG_TAG_FILENAME = "logstash_tag.conf";
     public static String OUTPUT_FILENAME = "logstash_output.txt";
@@ -124,7 +124,10 @@ public class Logstash implements LogMonitorClient {
 
         ProcessBuilder pb = null;
         File logsDir = null;
-        Log.info(c, method, AUTOFVT_DIR + logsDir);
+        Log.info(c, method, AUTOFVT_DIR);
+
+        checkAutoFVTDir();
+
         if (isWindows()) {
             pb = new ProcessBuilder(winCommands);
             pb.directory(new File(AUTOFVT_DIR + WIN_LOGSTASH_DIR));
@@ -497,5 +500,24 @@ public class Logstash implements LogMonitorClient {
     /** {@inheritDoc} */
     @Override
     public void lmcSetOriginLogOffsets() {
+    }
+
+    /**
+     * Get the correct autoFVT directory
+     *
+     * @throws Exception
+     **/
+    private void checkAutoFVTDir() throws Exception {
+        if (isWindows()) {
+            if (AUTOFVT_DIR.endsWith("com.ibm.ws.logstash.collector_fat\\autoFVT")) {
+                int index = AUTOFVT_DIR.length() - 8;
+                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "\\build\\lib\\autoFVT";
+            }
+        } else {
+            if (AUTOFVT_DIR.endsWith("com.ibm.ws.logstash.collector_fat/autoFVT")) {
+                int index = AUTOFVT_DIR.length() - 8;
+                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "/build/lib/autoFVT";
+            }
+        }
     }
 }
