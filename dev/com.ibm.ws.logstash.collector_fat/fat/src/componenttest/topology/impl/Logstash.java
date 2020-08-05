@@ -511,12 +511,12 @@ public class Logstash implements LogMonitorClient {
         if (isWindows()) {
             if (AUTOFVT_DIR.endsWith("com.ibm.ws.logstash.collector_fat\\autoFVT")) {
                 int index = AUTOFVT_DIR.length() - 8;
-                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "\\build\\lib\\autoFVT";
+                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "\\build\\libs\\autoFVT";
             }
         } else {
             if (AUTOFVT_DIR.endsWith("com.ibm.ws.logstash.collector_fat/autoFVT")) {
                 int index = AUTOFVT_DIR.length() - 8;
-                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "/build/lib/autoFVT";
+                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "/build/libs/autoFVT";
             }
         }
     }
