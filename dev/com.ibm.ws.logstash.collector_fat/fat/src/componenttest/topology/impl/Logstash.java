@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
@@ -126,8 +125,6 @@ public class Logstash implements LogMonitorClient {
         File logsDir = null;
         Log.info(c, method, AUTOFVT_DIR);
 
-        checkAutoFVTDir();
-
         if (isWindows()) {
             pb = new ProcessBuilder(winCommands);
             pb.directory(new File(AUTOFVT_DIR + WIN_LOGSTASH_DIR));
@@ -154,16 +151,16 @@ public class Logstash implements LogMonitorClient {
         FileUtils.recursiveDelete(logsDir);
 
 //        Set the System variable to overwrite the Java Security for starting logstash
-        Map<String, String> env = pb.environment();
-        String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
-        env.put("LS_JAVA_OPTS", ls_java_opts_value);
-        Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
-        Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
-        Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
-        if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
-            pb.environment().put("JAVA_OPTS", JAVA9_ARGS);
-            Log.info(c, method, "set env JAVA_OPTS=" + JAVA9_ARGS);
-        }
+//        Map<String, String> env = pb.environment();
+//        String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
+//        env.put("LS_JAVA_OPTS", ls_java_opts_value);
+//        Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
+//        Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
+//        Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
+//        if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
+//            pb.environment().put("JAVA_OPTS", JAVA9_ARGS);
+//            Log.info(c, method, "set env JAVA_OPTS=" + JAVA9_ARGS);
+//        }
         process = pb.start();
         reader = new OutputReader(process.getInputStream());
         reader.start();
@@ -428,11 +425,20 @@ public class Logstash implements LogMonitorClient {
     public RemoteFile getRemoteFile(String filename) throws FileNotFoundException {
         RemoteFile f = null;
 
+        RemoteFile f2 = null;
+
         Log.info(c, "waitForFileExistence", filename + " started");
         for (int i = 1; (i <= 80) && (f == null); i++) {
             Log.info(c, "waitForFileExistence", String.valueOf(i));
             try {
                 f = LibertyFileManager.getLibertyFile(machine, filename);
+                //tmp check for windows only
+                if (f2 == null) {
+                    Log.info(c, "waitForFileExistence", "logs dir is NULL");
+                } else {
+                    Log.info(c, "waitForFileExistence", "YAYYY");
+                }
+                f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + WIN_LOGSTASH_LOGS_DIR);
             } catch (Exception e) {
                 try {
                     Thread.sleep(3000);
@@ -502,22 +508,4 @@ public class Logstash implements LogMonitorClient {
     public void lmcSetOriginLogOffsets() {
     }
 
-    /**
-     * Get the correct autoFVT directory
-     *
-     * @throws Exception
-     **/
-    private void checkAutoFVTDir() throws Exception {
-        if (isWindows()) {
-            if (AUTOFVT_DIR.endsWith("com.ibm.ws.logstash.collector_fat\\autoFVT")) {
-                int index = AUTOFVT_DIR.length() - 8;
-                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "\\build\\libs\\autoFVT";
-            }
-        } else {
-            if (AUTOFVT_DIR.endsWith("com.ibm.ws.logstash.collector_fat/autoFVT")) {
-                int index = AUTOFVT_DIR.length() - 8;
-                AUTOFVT_DIR = AUTOFVT_DIR.substring(0, index) + "/build/libs/autoFVT";
-            }
-        }
-    }
 }
