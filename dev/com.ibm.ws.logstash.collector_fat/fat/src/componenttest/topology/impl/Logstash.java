@@ -433,19 +433,17 @@ public class Logstash implements LogMonitorClient {
             try {
                 f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + WIN_LOGSTASH_LOGS_DIR);
                 //tmp check for windows only
-                if (f2 == null) {
-                    Log.info(c, "waitForFileExistence", "logs dir is NULL");
-                } else {
-                    Log.info(c, "waitForFileExistence", "YAYYY");
-                    RemoteFile[] flist = f2.list(false);
-                    for (int j = 0; j < flist.length; i++) {
-                        Log.info(c, "waitForFileExistence FILE", flist[j].getName());
-                    }
+                Log.info(c, "waitForFileExistence", "YAYYY");
+                RemoteFile[] flist = f2.list(false);
+                for (int j = 0; j < flist.length; i++) {
+                    Log.info(c, "waitForFileExistence FILE", flist[j].getName());
                 }
                 f = LibertyFileManager.getLibertyFile(machine, filename);
 
             } catch (Exception e) {
                 try {
+                    if (f2 == null)
+                        Log.info(c, "waitForFileExistence", "NOOOO");
                     Thread.sleep(3000);
                 } catch (InterruptedException e1) {
                 }
