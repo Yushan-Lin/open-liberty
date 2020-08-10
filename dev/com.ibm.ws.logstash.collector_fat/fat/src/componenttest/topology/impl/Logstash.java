@@ -431,11 +431,16 @@ public class Logstash implements LogMonitorClient {
         for (int i = 1; (i <= 80) && (f == null); i++) {
             Log.info(c, "waitForFileExistence", String.valueOf(i));
             try {
-                f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + WIN_LOGSTASH_LOGS_DIR);
+                if (isWindows()) {
+                    f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + WIN_LOGSTASH_LOGS_DIR);
+                } else {
+                    f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + UNIX_LOGSTASH_DIR);
+
+                }
                 //tmp check for windows only
                 Log.info(c, "waitForFileExistence", "YAYYY");
                 RemoteFile[] flist = f2.list(false);
-                for (int j = 0; j < flist.length; i++) {
+                for (int j = 0; j < flist.length; j++) {
                     Log.info(c, "waitForFileExistence FILE", flist[j].getName());
                 }
                 f = LibertyFileManager.getLibertyFile(machine, filename);
