@@ -437,6 +437,10 @@ public class Logstash implements LogMonitorClient {
                     Log.info(c, "waitForFileExistence", "logs dir is NULL");
                 } else {
                     Log.info(c, "waitForFileExistence", "YAYYY");
+                    RemoteFile[] flist = f2.list(false);
+                    for (int j = 0; j < flist.length; i++) {
+                        Log.info(c, "waitForFileExistence FILE", flist[j].getName());
+                    }
                 }
                 f = LibertyFileManager.getLibertyFile(machine, filename);
 
