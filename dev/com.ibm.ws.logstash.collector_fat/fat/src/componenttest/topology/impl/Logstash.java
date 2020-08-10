@@ -431,14 +431,15 @@ public class Logstash implements LogMonitorClient {
         for (int i = 1; (i <= 80) && (f == null); i++) {
             Log.info(c, "waitForFileExistence", String.valueOf(i));
             try {
-                f = LibertyFileManager.getLibertyFile(machine, filename);
+                f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + WIN_LOGSTASH_LOGS_DIR);
                 //tmp check for windows only
                 if (f2 == null) {
                     Log.info(c, "waitForFileExistence", "logs dir is NULL");
                 } else {
                     Log.info(c, "waitForFileExistence", "YAYYY");
                 }
-                f2 = LibertyFileManager.getLibertyFile(machine, AUTOFVT_DIR + WIN_LOGSTASH_LOGS_DIR);
+                f = LibertyFileManager.getLibertyFile(machine, filename);
+
             } catch (Exception e) {
                 try {
                     Thread.sleep(3000);
@@ -493,7 +494,7 @@ public class Logstash implements LogMonitorClient {
         Log.info(c, method, "os.arch = " + arch);
 
         return !os.contains("zos") && !os.contains("z/os") && !os.contains("os/390") && !os.contains("os390")
-               && !os.contains("mac")
+//               && !os.contains("mac")
                && !(os.contains("linux") && ((arch.contains("ppc") || arch.contains("s390x"))) && !os.contains("sunos"))
                && !os.contains("aix");
     }
