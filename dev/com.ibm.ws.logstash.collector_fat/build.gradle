@@ -8,22 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-configurations {
-     libs
-}
-dependencies {
-     libs 'com.ibm.ws.logstash:logstash:7.8.0'
-  
-}
-task copyJar {
-     copy {
-          from configurations.libs
-          into "$projectDir/lib/"
-     }
-}
 task unzip(type: Copy) {
-     dependsOn copyJar
-     from zipTree(file("$projectDir/lib/logstash-7.8.0.jar"))
+     from zipTree(file("$projectDir/lib/logstash-7.8.1.zip"))
      into file("$projectDir/publish/files/")
 }
 

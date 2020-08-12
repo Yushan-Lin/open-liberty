@@ -59,12 +59,12 @@ public class Logstash implements LogMonitorClient {
                                              " --add-opens=java.base/java.net=ALL-UNNAMED";
 
     static final String WIN_PUBLISH_FILES_DIR = "\\lib\\LibertyFATTestFiles";
-    static final String WIN_LOGSTASH_DIR = WIN_PUBLISH_FILES_DIR + "\\logstash-7.8.0";
+    static final String WIN_LOGSTASH_DIR = WIN_PUBLISH_FILES_DIR + "\\logstash-7.8.1";
     static final String WIN_LOGSTASH_LOGS_DIR = WIN_LOGSTASH_DIR + "\\logs";
-    static final String winKillLogstash[] = { "cmd.exe", "/c", "WMIC", "PROCESS", "WHERE", "\"CommandLine Like '%logstash-7.8.0%'\"", "Call", "Terminate" };
+    static final String winKillLogstash[] = { "cmd.exe", "/c", "WMIC", "PROCESS", "WHERE", "\"CommandLine Like '%logstash-7.8.1%'\"", "Call", "Terminate" };
 
     static final String UNIX_PUBLISH_FILES_DIR = "/lib/LibertyFATTestFiles";
-    static final String UNIX_LOGSTASH_DIR = UNIX_PUBLISH_FILES_DIR + "/logstash-7.8.0";
+    static final String UNIX_LOGSTASH_DIR = UNIX_PUBLISH_FILES_DIR + "/logstash-7.8.1";
     static final String UNIX_LOGSTASH_LOGS_DIR = UNIX_LOGSTASH_DIR + "/logs";
     static final String UNIX_LOGSTASH_CMD = "/bin/logstash";
     static final String UNIX_JRUBY_CMD = "/vendor/jruby/bin/jruby";
@@ -81,8 +81,8 @@ public class Logstash implements LogMonitorClient {
     }
 
     public boolean enableTag() throws Exception {
-        File configFile = new File(AUTOFVT_DIR + "/lib/LibertyFATTestFiles/logstash-7.8.0/" + CONFIG_FILENAME);
-        File modifiedConfig = new File(AUTOFVT_DIR + "/lib/LibertyFATTestFiles/logstash-7.8.0/" + CONFIG_TAG_FILENAME);
+        File configFile = new File(AUTOFVT_DIR + "/lib/LibertyFATTestFiles/logstash-7.8.1/" + CONFIG_FILENAME);
+        File modifiedConfig = new File(AUTOFVT_DIR + "/lib/LibertyFATTestFiles/logstash-7.8.1/" + CONFIG_TAG_FILENAME);
         if (!configFile.exists()) {
             Log.info(c, " enable tag", "-->cannot find config file " + configFile.getAbsolutePath());
             return false;
