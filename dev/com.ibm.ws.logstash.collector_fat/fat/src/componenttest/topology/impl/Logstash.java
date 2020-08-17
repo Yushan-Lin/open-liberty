@@ -151,14 +151,17 @@ public class Logstash implements LogMonitorClient {
         // Clean logsDir
         FileUtils.recursiveDelete(logsDir);
 
-//        Set the System variable to overwrite the Java Security for starting logstash
+//        Set the System variable to overwrite the Java Security for starting logstash for IBM Java
         Map<String, String> env = pb.environment();
         String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
-        //set both?
+
         env.put("LS_JAVA_OPTS", ls_java_opts_value);
-        env.put("JAVA_OPTS", ls_java_opts_value);
         Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
-        Log.info(c, method, "set env JAVA_OPTS=" + ls_java_opts_value);
+
+        //unset JAVA_OPTS
+        env.put("JAVA_OPTS", "");
+        Log.info(c, method, "unset env JAVA_OPTS=");
+
         Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
         Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
         if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
