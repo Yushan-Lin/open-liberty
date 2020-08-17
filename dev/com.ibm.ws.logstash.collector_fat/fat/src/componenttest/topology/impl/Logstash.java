@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
@@ -151,16 +152,19 @@ public class Logstash implements LogMonitorClient {
         FileUtils.recursiveDelete(logsDir);
 
 //        Set the System variable to overwrite the Java Security for starting logstash
-//        Map<String, String> env = pb.environment();
-//        String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
-//        env.put("LS_JAVA_OPTS", ls_java_opts_value);
-//        Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
-//        Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
-//        Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
-//        if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
-//            pb.environment().put("JAVA_OPTS", JAVA9_ARGS);
-//            Log.info(c, method, "set env JAVA_OPTS=" + JAVA9_ARGS);
-//        }
+        Map<String, String> env = pb.environment();
+        String ls_java_opts_value = "-Djava.security.properties=" + this.getJavaSecuritySettingFilePath();
+        //set both?
+        env.put("LS_JAVA_OPTS", ls_java_opts_value);
+        env.put("JAVA_OPTS", ls_java_opts_value);
+        Log.info(c, method, "set env LS_JAVA_OPTS=" + ls_java_opts_value);
+        Log.info(c, method, "set env JAVA_OPTS=" + ls_java_opts_value);
+        Boolean found = new File(this.getJavaSecuritySettingFilePath()).exists();
+        Log.info(c, method, this.getJavaSecuritySettingFilePath() + " is " + (found ? "found" : "NOT found"));
+        if (JavaInfo.JAVA_VERSION >= 9 && JavaInfo.JAVA_VERSION < 11) {
+            pb.environment().put("JAVA_OPTS", JAVA9_ARGS);
+            Log.info(c, method, "set env JAVA_OPTS=" + JAVA9_ARGS);
+        }
         process = pb.start();
         reader = new OutputReader(process.getInputStream());
         reader.start();
