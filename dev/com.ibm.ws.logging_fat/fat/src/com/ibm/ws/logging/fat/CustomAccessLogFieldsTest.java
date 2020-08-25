@@ -603,8 +603,8 @@ public class CustomAccessLogFieldsTest {
             assertTrue("Nothing was returned from the servlet - there was a problem connecting.", lines.length() > 0);
             con.disconnect();
         } catch (IOException e) {
-            //We can still log access log, just the status may return 500 in open liberty image
-            Log.info(c, "hitHttpsEndpoint", e.getMessage());
+            Log.error(c, "hitHttpEndpoint", e);
+            fail("Exception caught. Please see System.err log to view stack trace.");
         } finally {
             if (con != null)
                 con.disconnect();
@@ -647,8 +647,8 @@ public class CustomAccessLogFieldsTest {
             assertTrue("Nothing was returned from the servlet - there was a problem connecting.", lines.length() > 0);
             con.disconnect();
         } catch (IOException e) {
-            //We can still log access log, just the status may return 500 in open liberty image
-            Log.info(c, "hitHttpsEndpointSecure", e.getMessage());
+            Log.error(c, "hitHttpEndpoint", e);
+            fail("Exception caught. Please see System.err log to view stack trace.");
         } finally {
             if (con != null)
                 con.disconnect();

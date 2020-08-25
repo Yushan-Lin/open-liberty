@@ -10,7 +10,13 @@
  -->
 <server description="Server for testing Liberty logging in a server">
 
-    <include location="../fatTestPorts.xml"/>
+    <include location="../fatTestCommon.xml"/>
+	
+    <iiopEndpoint id="defaultIiopEndpoint" iiopPort="${bvt.prop.IIOP}">
+        <iiopsOptions  iiopsPort="${bvt.prop.IIOP.secure}" sslRef="defaultSSLConfig"/>
+    </iiopEndpoint>
+
+    <wasJmsEndpoint host="localhost" wasJmsPort="${bvt.prop.jms}" wasJmsSSLPort="${bvt.prop.jms.ssl}" />
 
 	<featureManager>
 	   <feature>jsp-2.3</feature>
