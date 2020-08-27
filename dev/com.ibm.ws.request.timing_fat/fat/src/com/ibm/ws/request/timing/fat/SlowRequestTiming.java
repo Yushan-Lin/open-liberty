@@ -80,7 +80,7 @@ public class SlowRequestTiming {
         CommonTasks.writeLogMsg(Level.INFO, "Output of br for jdbcTestPrj_3 servlet" + br.readLine());
     }
 
-    @Test
+//    @Test
     public void testSlowRequestTiming() throws Exception {
         //Set to default Configuration of Request Timing feature
         server.setServerConfigurationFile("server_original.xml");
@@ -149,7 +149,7 @@ public class SlowRequestTiming {
         CommonTasks.writeLogMsg(Level.INFO, "Root event type : " + slowRecord.contains("websphere.servlet.service"));
     }
 
-    @Test
+//    @Test
     public void testSlowReqTimingIncludeContextInfo() throws Exception {
         CommonTasks.writeLogMsg(Level.INFO, "**** >>>>> Updating server with configuration : includeContextInfo=false");
 
@@ -174,7 +174,7 @@ public class SlowRequestTiming {
         CommonTasks.writeLogMsg(Level.INFO, "***** includeContextInfo works for slow request timing.. *****");
     }
 
-    @Test
+//    @Test
     public void testSlowReqMonitorIntervals() throws Exception {
         CommonTasks.writeLogMsg(Level.INFO, "-------> Setting slowRequestThreshold to 1 second");
         server.setServerConfigurationFile("server_slowRequestThreshold1.xml");
@@ -226,7 +226,7 @@ public class SlowRequestTiming {
         }
     }
 
-    @Test
+//    @Test
     public void testSlowReqTimingTurnOff() throws Exception {
         server.setServerConfigurationFile("server_slowRequestThreshold0.xml");
         server.waitForStringInLog("CWWKG0017I");
@@ -373,7 +373,7 @@ public class SlowRequestTiming {
 //
 //    }
 
-    @Test
+//    @Test
     public void testSlowReqSampleRateZero() throws Exception {
         CommonTasks.writeLogMsg(Level.INFO, "**** >>>>> Updating server with configuration : sampleRate=0");
         server.setServerConfigurationFile("server_sampleRate0.xml");
@@ -390,7 +390,7 @@ public class SlowRequestTiming {
         CommonTasks.writeLogMsg(Level.INFO, "******* Slow request timing works for Zero Sample Rate*******");
     }
 
-    @Test
+//    @Test
     @Mode(TestMode.FULL)
     public void testDynamicEnableWithNoContextInfo() throws Exception {
         //Step 1 - Remove Request Timing feature
@@ -522,7 +522,7 @@ public class SlowRequestTiming {
     }
 
     @Test
-    @Mode(TestMode.FULL)
+//    @Mode(TestMode.FULL) //tmp
     public void testSlowReqDynamicPatternUpdate() throws Exception {
         //Step 1 - Update server configuration - ContextInfo = false , Threshold = 2s
         CommonTasks.writeLogMsg(Level.INFO, "--------> Started Server with Pattern disabled..");
@@ -533,7 +533,7 @@ public class SlowRequestTiming {
         createRequest("?sleepTime=3000");
 
         int slowCount = fetchNoOfslowRequestWarnings();
-        assertTrue("No Slow request timing records found! : ", (slowCount > 0));
+        assertTrue("No Slow request timing records found! : ", slowCount > 0);
 
         List<String> lines = server.findStringsInFileInLibertyServerRoot("ms", MESSAGE_LOG);
 
