@@ -81,7 +81,7 @@ public class TimingRequestTiming {
      * </timing>
      * </requestTiming>
      */
-    @Test
+//    @Test
     public void testTimingLocalOverridingGlobal() throws Exception {
         CommonTasks.writeLogMsg(Level.INFO, "**** >>>>> server configuration thresholds for - <global - slow : 9s , hung : 20s> <timing - Slow : 5s , hung : 7s>");
         server.setServerConfigurationFile("server_timing_local.xml");
@@ -144,7 +144,7 @@ public class TimingRequestTiming {
      * </timing>
      * </requestTiming>
      */
-    @Test
+//    @Test
     public void testDynamicTimingEnableDisable() throws Exception {
         //Set to default Configuration of Request Timing feature
         server.setServerConfigurationFile("server_original.xml");
@@ -194,7 +194,7 @@ public class TimingRequestTiming {
     /**
      * Verify that an exact match on context info over-rides global defaults.
      */
-    @Test
+//    @Test
     public void testContextInfoExactMatchOverrideDefault() throws Exception {
         CommonTasks.writeLogMsg(Level.INFO, "**** >>>>> server configuration thresholds for - <global - slow : 5s , hung : 10s> <timing - Slow : 120s , hung : 120s>");
         server.setServerConfigurationFile("contextInfoPattern/server_timing_1.xml");
@@ -238,7 +238,7 @@ public class TimingRequestTiming {
     /**
      * Verify that a wild-card match on context info over-rides global defaults.
      */
-    @Test
+//    @Test
     public void testContextInfoWildCardMatchOverrideDefault() throws Exception {
         CommonTasks.writeLogMsg(Level.INFO, "**** >>>>> server configuration thresholds for - <global - slow : 5s , hung : 10s> <timing - Slow : 120s , hung : 120s>");
         server.setServerConfigurationFile("contextInfoPattern/server_timing_3.xml");

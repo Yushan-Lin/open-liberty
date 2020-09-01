@@ -21,7 +21,7 @@ import componenttest.rules.repeater.RepeatTests;
 @RunWith(Suite.class)
 @SuiteClasses({
                 SlowRequestTiming.class,
-                HungRequestTiming.class,
+//                HungRequestTiming.class,
                 TimingRequestTiming.class
 })
 
