@@ -47,7 +47,7 @@ public class TestJDBC extends HttpServlet {
             try {
                 stmt.executeUpdate("create table " + tableName + " (name varchar(50) not null, population int, county varchar(30))");
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             Stock myFavStock = new Stock("Stock1", new Double(100D));
@@ -69,13 +69,13 @@ public class TestJDBC extends HttpServlet {
                     }
                     returnValue = -1;
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
 
             System.out.println("doGet completed Successfully");
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         } finally {
             try {
                 if (stmt != null)
@@ -83,13 +83,13 @@ public class TestJDBC extends HttpServlet {
                 else
                     System.out.println("stmt is null");
             } catch (SQLException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             try {
                 if (con != null)
                     con.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             try {
@@ -97,7 +97,7 @@ public class TestJDBC extends HttpServlet {
                 Thread.sleep(sleepTimeInMilliSecs);
                 System.out.println("Thread woke up");
             } catch (InterruptedException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             System.out.println("%%%%%%%%%%% Completed session set");
