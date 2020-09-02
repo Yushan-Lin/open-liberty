@@ -47,7 +47,7 @@ public class TestJDBC extends HttpServlet {
             try {
                 stmt.executeUpdate("create table " + tableName + " (name varchar(50) not null, population int, county varchar(30))");
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new Exception(e);
             }
 
             Stock myFavStock = new Stock("Stock1", new Double(100D));
@@ -69,13 +69,13 @@ public class TestJDBC extends HttpServlet {
                     }
                     returnValue = -1;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new Exception(e);
                 }
             }
 
             System.out.println("doGet completed Successfully");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e);
         } finally {
             try {
                 if (stmt != null)
