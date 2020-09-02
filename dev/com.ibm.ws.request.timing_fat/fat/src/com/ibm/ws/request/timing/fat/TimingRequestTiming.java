@@ -13,6 +13,7 @@ package com.ibm.ws.request.timing.fat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -502,22 +503,40 @@ public class TimingRequestTiming {
      */
     @Test
 //    @Mode(TestMode.FULL) //this one!!
-    public void testTimingGlobalConfigFollowsLocal() throws Exception {
+    public void testTimingGlobalConfigFollowsLocal() {
         CommonTasks.writeLogMsg(Level.INFO, "**** >>>>> server configuration thresholds for - <global : slow : 3s , hung : 6s ><timing - slow : 2s , hung : 9m>");
-        server.setServerConfigurationFile("server_timing_global_follows_local.xml");
-        waitForConfigurationUpdate();
-
-        createRequests(5000, 1);
+        try {
+            server.setServerConfigurationFile("server_timing_global_follows_local.xml");
+            waitForConfigurationUpdate();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            // Do you need FFDC here? Remember FFDC instrumentation and @FFDCIgnore
+            fail("failed update" + e.getMessage());
+        }
+        try {
+            createRequests(5000, 1);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            // Do you need FFDC here? Remember FFDC instrumentation and @FFDCIgnore
+            fail("failed creating requests=" + e.getMessage());
+        }
 
         server.waitForStringInLogUsingMark("TRAS0112W", 10000);
 
-        int slow = fetchSlowRequestWarningsCount();
-        int hung = fetchHungRequestWarningsCount();
-        assertTrue("Expected > 1 slow request warnings but found : " + slow, (slow > 1));
+        int slow;
+        try {
+            slow = fetchSlowRequestWarningsCount();
+            int hung = fetchHungRequestWarningsCount();
+            assertTrue("Expected > 1 slow request warnings but found : " + slow, (slow > 1));
 
-        assertTrue("Expected 0 hung request warning but found : " + hung, (hung == 0));
+            assertTrue("Expected 0 hung request warning but found : " + hung, (hung == 0));
 
-        CommonTasks.writeLogMsg(Level.INFO, "***** timing works - local overrides global specified after it *****");
+            CommonTasks.writeLogMsg(Level.INFO, "***** timing works - local overrides global specified after it *****");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            // Do you need FFDC here? Remember FFDC instrumentation and @FFDCIgnore
+            fail("not enough " + e.getMessage());
+        }
     }
 
     /*

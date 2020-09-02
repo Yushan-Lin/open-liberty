@@ -522,7 +522,7 @@ public class SlowRequestTiming {
     }
 
     @Test
-//    @Mode(TestMode.FULL) //tmp
+//    @Mode(TestMode.FULL) //this one
     public void testSlowReqDynamicPatternUpdate() throws Exception {
         //Step 1 - Update server configuration - ContextInfo = false , Threshold = 2s
         CommonTasks.writeLogMsg(Level.INFO, "--------> Started Server with Pattern disabled..");
@@ -530,7 +530,13 @@ public class SlowRequestTiming {
         waitForConfigurationUpdate();
 
         //Step 2 -  create request for 3seconds and look for slow request warnings do not have contextInfo
-        createRequest("?sleepTime=3000");
+        try {
+            createRequest("?sleepTime=3000");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            // Do you need FFDC here? Remember FFDC instrumentation and @FFDCIgnore
+            fail("failed creating requests=" + e.getMessage());
+        }
 
         int slowCount = fetchNoOfslowRequestWarnings();
         assertTrue("No Slow request timing records found! : ", slowCount > 0);
@@ -549,7 +555,13 @@ public class SlowRequestTiming {
         waitForConfigurationUpdate();
 
         //Step 4 -  create request for 3 seconds and look for slow request warnings have contextInfo
-        createRequest("?sleepTime=3000");
+        try {
+            createRequest("?sleepTime=3000");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            // Do you need FFDC here? Remember FFDC instrumentation and @FFDCIgnore
+            fail("failed creating requests=" + e.getMessage());
+        }
 
         lines = server.findStringsInLogsUsingMark("ms", MESSAGE_LOG);
         server.setMarkToEndOfLog();
