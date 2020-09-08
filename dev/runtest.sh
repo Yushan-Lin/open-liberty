@@ -3,7 +3,7 @@
 java --version
 for i in {1..40};
 do
-	OUTPUT=$(./gradlew com.ibm.ws.request.timing_fat:buildandrun)
+	OUTPUT=$(./gradlew com.ibm.ws.microprofile.opentracing.1.3_fat_tck:buildandrun)
 	echo "${OUTPUT}"
 	if [[ "$OUTPUT" =~ "FAILED" ]]; 
 	then

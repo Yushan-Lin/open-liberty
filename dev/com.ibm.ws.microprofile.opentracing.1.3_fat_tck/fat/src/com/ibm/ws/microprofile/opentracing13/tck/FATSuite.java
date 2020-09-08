@@ -28,9 +28,9 @@ import componenttest.topology.impl.LibertyServerFactory;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    OpentracingTCKLauncher.class,
-    OpentracingTCKLauncherMicroProfile.class,
-    OpentracingRestClientTCKLauncher.class
+    OpentracingTCKLauncher.class
+//    OpentracingTCKLauncherMicroProfile.class,
+//    OpentracingRestClientTCKLauncher.class
 })
 public class FATSuite {
     private static final Class<? extends FATSuite> CLASS = FATSuite.class;
